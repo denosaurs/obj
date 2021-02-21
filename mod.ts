@@ -224,7 +224,7 @@ export class Obj implements ObjData {
     return ret;
   }
 
-  protected parseGroup(
+  private parseGroup(
     group: string,
   ): IndexTuple {
     const groupSplit = group.split("/");
@@ -417,7 +417,7 @@ export class Mtl {
     return mtl;
   }
 
-  protected parseVec(parts: string[]): [number, number, number] {
+  private parseVec(parts: string[]): [number, number, number] {
     return [
       otherwise(parts.shift(), parseFloat, () => {
         throw IncorrectArguments;
