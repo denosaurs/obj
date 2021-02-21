@@ -126,15 +126,17 @@ export class Obj implements ObjData {
           ]);
           break;
         case "f":
-          const poly = dat.parseFace(parts);
-          if (group === undefined) {
-            group = {
-              name: "default",
-              index: 0,
-              polys: [poly],
-            };
-          } else {
-            group.polys.push(poly);
+          {
+            const poly = dat.parseFace(parts);
+            if (group === undefined) {
+              group = {
+                name: "default",
+                index: 0,
+                polys: [poly],
+              };
+            } else {
+              group.polys.push(poly);
+            }
           }
           break;
         case "o":
@@ -165,20 +167,22 @@ export class Obj implements ObjData {
           dat.materialLibs.push(new Mtl(line.slice(keyword.length).trim()));
           break;
         case "usemtl":
-          const g: Group = otherwise(
-            group,
-            (g) => g,
-            () => ({ name: "default", index: 0, polys: [] }),
-          );
-          if (g.material !== undefined) {
-            obj.groups.push(g);
-            g.index += 1;
-            g.polys = [];
+          {
+            const g: Group = otherwise(
+              group,
+              (g) => g,
+              () => ({ name: "default", index: 0, polys: [] }),
+            );
+            if (g.material !== undefined) {
+              obj.groups.push(g);
+              g.index += 1;
+              g.polys = [];
+            }
+            g.material = otherwise(parts.shift(), (ref) => ({ ref }), () => {
+              throw IncorrectArguments;
+            });
+            group = g;
           }
-          g.material = otherwise(parts.shift(), (ref) => ({ ref }), () => {
-            throw IncorrectArguments;
-          });
-          group = g;
           break;
         case "s":
           break;
