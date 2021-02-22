@@ -141,8 +141,8 @@ export class Obj implements ObjData {
           break;
         case "o":
           if (group !== undefined) {
-            obj.groups.push(group);
-            dat.objects.push(obj);
+            obj.groups.push({ ...group });
+            dat.objects.push({ ...obj });
             group = undefined;
           }
 
@@ -152,7 +152,7 @@ export class Obj implements ObjData {
           break;
         case "g":
           if (group !== undefined) {
-            obj.groups.push(group);
+            obj.groups.push({ ...group });
           }
 
           if (line.length > 2) {
@@ -168,20 +168,16 @@ export class Obj implements ObjData {
           break;
         case "usemtl":
           {
-            const g: Group = otherwise(
-              group,
-              (g) => g,
-              () => ({ name: "default", index: 0, polys: [] }),
-            );
+            const g: Group = group ?? { name: "default", index: 0, polys: [] };
             if (g.material !== undefined) {
-              obj.groups.push(g);
+              obj.groups.push({ ...g });
               g.index += 1;
               g.polys = [];
             }
             g.material = otherwise(parts.shift(), (ref) => ({ ref }), () => {
               throw IncorrectArguments;
             });
-            group = g;
+            group = { ...g };
           }
           break;
         case "s":
@@ -202,10 +198,10 @@ export class Obj implements ObjData {
     }
 
     if (group !== undefined) {
-      obj.groups.push(group);
+      obj.groups.push({ ...group });
     }
 
-    dat.objects.push(obj);
+    dat.objects.push({ ...obj });
 
     return dat;
   }
